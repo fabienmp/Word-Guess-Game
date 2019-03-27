@@ -1,0 +1,23 @@
+#WORD_CONTAINER {
+    font-size: 2em;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+#STICKMAN_CANVAS {
+    color: white;
+    border: white dashed 2px;
+    padding: 15px;
+}
+
+.modal-content {
+    border: none;
+}
+
+.modal-body {
+    text-align: center;
+    background-color: black;
+}
