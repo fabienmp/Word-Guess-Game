@@ -26,7 +26,7 @@ window.onload = function () {
         'https://www.youtube.com/embed/va8zjTPsJrI?start=35',
         'https://www.youtube.com/embed/nVequqtEV3k?start=57',
         'https://www.youtube.com/embed/BpE_DxkPSnE?start=62',
-        'https://www.youtube.com/embed/sqjfq5gsfYk'
+        'https://www.youtube.com/embed/sqjfq5gsfYk?start=60'
     ]
 
     var WORD;
@@ -41,6 +41,7 @@ window.onload = function () {
         TOTAL_LIVES = 10;
         TOTAL_CORRECT_GUESSES = 0;
         TOTAL_REMAINING_UNKNOWN_CHARS = 0;
+        startKeyUpListener();
         setRandomWord();
         renderGuesses();
         comments();
@@ -67,24 +68,33 @@ window.onload = function () {
         }
     }
 
-    document.addEventListener('keyup', function (event) {
+    startKeyUpListener = function () {
 
-        if (event.code.indexOf('Key') > -1) {
-            var inputChar = event.code[event.code.length - 1].toString().toLocaleLowerCase();
-            if (GUESSES.indexOf(inputChar) == -1) {
-                GUESSES.push(inputChar);
-                if (WORD.toLowerCase().indexOf(inputChar) > -1) {
-                    TOTAL_CORRECT_GUESSES++;
-                } else {
-                    TOTAL_LIVES--;
-                    drawArray[TOTAL_LIVES]();
+        document.addEventListener('keyup', function (event) {
+
+            if (event.code.indexOf('Key') > -1) {
+                var inputChar = event.code[event.code.length - 1].toString().toLocaleLowerCase();
+                if (GUESSES.indexOf(inputChar) == -1) {
+                    GUESSES.push(inputChar);
+                    if (WORD.toLowerCase().indexOf(inputChar) > -1) {
+                        TOTAL_CORRECT_GUESSES++;
+                    } else {
+                        TOTAL_LIVES--;
+                        drawArray[TOTAL_LIVES]();
+                    }
                 }
             }
-        }
 
-        renderGuesses();
-        comments();
-    });
+            renderGuesses();
+            comments();
+        });
+    }
+
+    stopKeyUpListener = function() {
+        document.removeEventListener('keyup', function (event) {
+
+        });
+    }
 
     setRandomWord = function () {
         var randomIndex = Math.floor(Math.random() * TOP_10_MOVIES.length);
@@ -97,11 +107,13 @@ window.onload = function () {
         livesStatusElement.innerHTML = "You have " + TOTAL_LIVES + " lives left.";
         if (TOTAL_LIVES < 1) {
             livesStatusElement.innerHTML = "Game Over";
+            stopKeyUpListener();
         }
         if (TOTAL_REMAINING_UNKNOWN_CHARS == 0) {
             livesStatusElement.innerHTML = "You Won!";
             showVideo();
-            
+            stopKeyUpListener();
+
         }
     }
 
@@ -116,6 +128,7 @@ window.onload = function () {
     renderCanvas = function () {
         var stickmanCanvas = document.getElementById("STICKMAN_CANVAS");
         var context = stickmanCanvas.getContext('2d');
+        context.clearRect(0, 0, stickmanCanvas.width, stickmanCanvas.height);
         context.beginPath();
         context.strokeStyle = "#fff";
         context.lineWidth = 2;
@@ -175,7 +188,7 @@ window.onload = function () {
 
     showVideo = function () {
         $('#myModal').modal('show');
-        $('#myModal iframe').attr('src', VIDEO_LINK + '?autoplay=1');
+        $('#myModal iframe').attr('src', VIDEO_LINK + '&autoplay=1&controls=0&disablekb=1');
 
         $('#myModal').on('hidden.bs.modal', function () {
             $('#myModal iframe').removeAttr('src');
