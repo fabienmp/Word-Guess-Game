@@ -101,6 +101,7 @@ window.onload = function () {
         if (TOTAL_REMAINING_UNKNOWN_CHARS == 0) {
             livesStatusElement.innerHTML = "You Won!";
             showVideo();
+            
         }
     }
 
@@ -178,7 +179,9 @@ window.onload = function () {
 
         $('#myModal').on('hidden.bs.modal', function () {
             $('#myModal iframe').removeAttr('src');
+            newGame();
         });
+
     }
 
     newGame();
