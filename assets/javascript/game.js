@@ -23,7 +23,7 @@ window.onload = function () {
         'https://www.youtube.com/embed/QyaDlIirJnw?start=77',
         'https://www.youtube.com/embed/pPls2qEMs_k?start=795',
         'https://www.youtube.com/embed/J3UyjlaBMcY?start=39',
-        'https://www.youtube.com/embed/va8zjTPsJrI?start=35',
+        'https://www.youtube.com/embed/va8zjTPsJrI?start=75',
         'https://www.youtube.com/embed/nVequqtEV3k?start=57',
         'https://www.youtube.com/embed/BpE_DxkPSnE?start=62',
         'https://www.youtube.com/embed/sqjfq5gsfYk?start=60'
@@ -66,6 +66,20 @@ window.onload = function () {
                 container.innerHTML += WORD.charAt(index) + '  ';
             }
         }
+
+        var guessesContainer = document.getElementById('GUESSED_SO_FAR');
+        guessesContainer.innerHTML = '';
+        for (var index = 0; index < GUESSES.length; index++) {
+            if (WORD.indexOf(GUESSES[index]) > -1)
+            {
+                guessesContainer.innerHTML += '<span class="badge">' + GUESSES[index].toString().toUpperCase() + '</span>&nbsp;';
+            }
+            else
+            {
+                guessesContainer.innerHTML += '<span class="badge" style="color: red;">' + GUESSES[index].toString().toUpperCase() + '</span>&nbsp;';
+            }
+      
+        }
     }
 
     startKeyUpListener = function () {
@@ -90,7 +104,7 @@ window.onload = function () {
         });
     }
 
-    stopKeyUpListener = function() {
+    stopKeyUpListener = function () {
         document.removeEventListener('keyup', function (event) {
 
         });
@@ -104,7 +118,7 @@ window.onload = function () {
 
     comments = function () {
         var livesStatusElement = document.getElementById('LIVES_STATUS');
-        livesStatusElement.innerHTML = "You have " + TOTAL_LIVES + " lives left.";
+        livesStatusElement.innerHTML = "Number of Guesses Remaining: " + TOTAL_LIVES;
         if (TOTAL_LIVES < 1) {
             livesStatusElement.innerHTML = "Game Over";
             stopKeyUpListener();
