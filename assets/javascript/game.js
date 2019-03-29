@@ -34,8 +34,12 @@ window.onload = function () {
     var GUESSES = [];
     var TOTAL_LIVES;
     var TOTAL_CORRECT_GUESSES;
+    var TOTAL_WINS = 0;
 
     newGame = function () {
+
+        var keyToBeginContainer = document.getElementById('KEY_TO_BEGIN');
+        keyToBeginContainer.innerHTML = 'Press a key to begin.';
 
         GUESSES = [];
         TOTAL_LIVES = 10;
@@ -44,7 +48,7 @@ window.onload = function () {
         startKeyUpListener();
         setRandomWord();
         renderGuesses();
-        comments();
+        renderComments();
         renderCanvas();
     }
 
@@ -70,44 +74,44 @@ window.onload = function () {
         var guessesContainer = document.getElementById('GUESSED_SO_FAR');
         guessesContainer.innerHTML = '';
         for (var index = 0; index < GUESSES.length; index++) {
-            if (WORD.indexOf(GUESSES[index]) > -1)
-            {
+            if (WORD.indexOf(GUESSES[index]) > -1) {
                 guessesContainer.innerHTML += '<span class="badge">' + GUESSES[index].toString().toUpperCase() + '</span>&nbsp;';
-            }
-            else
-            {
+            } else {
                 guessesContainer.innerHTML += '<span class="badge" style="color: red;">' + GUESSES[index].toString().toUpperCase() + '</span>&nbsp;';
             }
-      
+
         }
     }
 
-    startKeyUpListener = function () {
+    keyUpEventFunction = function (event) {
+        if (event.code.indexOf('Key') > -1) {
 
-        document.addEventListener('keyup', function (event) {
+            var keyToBeginContainer = document.getElementById('KEY_TO_BEGIN');
+            keyToBeginContainer.innerHTML = '';
 
-            if (event.code.indexOf('Key') > -1) {
-                var inputChar = event.code[event.code.length - 1].toString().toLocaleLowerCase();
-                if (GUESSES.indexOf(inputChar) == -1) {
-                    GUESSES.push(inputChar);
-                    if (WORD.toLowerCase().indexOf(inputChar) > -1) {
-                        TOTAL_CORRECT_GUESSES++;
-                    } else {
-                        TOTAL_LIVES--;
+            var inputChar = event.code[event.code.length - 1].toString().toLocaleLowerCase();
+            if (GUESSES.indexOf(inputChar) == -1) {
+                GUESSES.push(inputChar);
+                if (WORD.toLowerCase().indexOf(inputChar) > -1) {
+                    TOTAL_CORRECT_GUESSES++;
+                } else {
+                    TOTAL_LIVES--;
+                    if (drawArray[TOTAL_LIVES])
                         drawArray[TOTAL_LIVES]();
-                    }
                 }
             }
+        }
 
-            renderGuesses();
-            comments();
-        });
+        renderGuesses();
+        renderComments();
+    }
+
+    startKeyUpListener = function () {
+        document.addEventListener('keyup', keyUpEventFunction);
     }
 
     stopKeyUpListener = function () {
-        document.removeEventListener('keyup', function (event) {
-
-        });
+        document.removeEventListener('keyup', keyUpEventFunction);
     }
 
     setRandomWord = function () {
@@ -116,18 +120,22 @@ window.onload = function () {
         VIDEO_LINK = TOP_10_LINKS[randomIndex];
     }
 
-    comments = function () {
+    renderComments = function () {
         var livesStatusElement = document.getElementById('LIVES_STATUS');
         livesStatusElement.innerHTML = "Number of Guesses Remaining: " + TOTAL_LIVES;
+
+        var totalWinsStatusElement = document.getElementById('TOTAL_WINS_STATUS');
+        totalWinsStatusElement.innerHTML = "Total Wins: " + TOTAL_WINS;
+
         if (TOTAL_LIVES < 1) {
             livesStatusElement.innerHTML = "Game Over";
             stopKeyUpListener();
+            newGame();
         }
         if (TOTAL_REMAINING_UNKNOWN_CHARS == 0) {
             livesStatusElement.innerHTML = "You Won!";
             showVideo();
             stopKeyUpListener();
-
         }
     }
 
@@ -197,6 +205,7 @@ window.onload = function () {
 
     var newGameButton = document.getElementById('newGameButton');
     newGameButton.addEventListener('click', function (event) {
+        TOTAL_WINS = 0;
         newGame();
     });
 
@@ -204,8 +213,10 @@ window.onload = function () {
         $('#myModal').modal('show');
         $('#myModal iframe').attr('src', VIDEO_LINK + '&autoplay=1&controls=0&disablekb=1');
 
+        $('#myModal').off('hidden.bs.modal');
         $('#myModal').on('hidden.bs.modal', function () {
             $('#myModal iframe').removeAttr('src');
+            TOTAL_WINS++;
             newGame();
         });
 
@@ -213,4 +224,6 @@ window.onload = function () {
 
     newGame();
 
+
+    
 }
