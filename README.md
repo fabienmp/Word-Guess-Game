@@ -16,7 +16,7 @@ This hangman game is themed around the top 10 movies from the website https://ww
 
 ## Acknowledgments
 
-The website https://www.imdb.com/ for his awesome movie rankings.
-The website https://www.youtube.com for providing video content with a flexible api.
-The team at https://www.audacityteam.org for providing a free recording software. 
-Cathy Dutton for her inspiring code at https://codepen.io/cathydutton/pen/ldazc
+* The website https://www.imdb.com/ for his awesome movie rankings.
+* The website https://www.youtube.com for providing video content with a flexible api.
+* The team at https://www.audacityteam.org for providing a free recording software. 
+* Cathy Dutton for her inspiring code at https://codepen.io/cathydutton/pen/ldazc
