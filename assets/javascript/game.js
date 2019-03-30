@@ -29,24 +29,41 @@ window.onload = function () {
         'https://www.youtube.com/embed/sqjfq5gsfYk?start=60'
     ]
 
+    var TOP_10_SCORE = ["assets/mp3/shawshank.mp3",
+        "assets/mp3/godfateher_1.mp3",
+        "assets/mp3/dark_knight.mp3",
+        "assets/mp3/godfateher_2.mp3",
+        "assets/mp3/lord_1.mp3",
+        "assets/mp3/pulp.mp3",
+        "assets/mp3/shindler.mp3",
+        "assets/mp3/angry.mp3",
+        "assets/mp3/fight.mp3",
+        "assets/mp3/lord_2.mp3",
+    ]
+
     var WORD;
     var VIDEO_LINK;
     var GUESSES = [];
     var TOTAL_LIVES;
     var TOTAL_CORRECT_GUESSES;
     var TOTAL_WINS = 0;
+    var SELECTED_INDEX = -1
+    var AUDIO_PLAYER;
+    var FIRST_KEY_STROKE = false;
 
     newGame = function () {
 
         var keyToBeginContainer = document.getElementById('KEY_TO_BEGIN');
-        keyToBeginContainer.innerHTML = 'Press a key to begin.';
+        keyToBeginContainer.innerHTML = 'Press a key to get started!';
 
         GUESSES = [];
         TOTAL_LIVES = 10;
         TOTAL_CORRECT_GUESSES = 0;
         TOTAL_REMAINING_UNKNOWN_CHARS = 0;
+        FIRST_KEY_STROKE = true;
         startKeyUpListener();
         setRandomWord();
+        stopAudio();
         renderGuesses();
         renderComments();
         renderCanvas();
@@ -86,6 +103,11 @@ window.onload = function () {
     keyUpEventFunction = function (event) {
         if (event.code.indexOf('Key') > -1) {
 
+            if (FIRST_KEY_STROKE) {
+                FIRST_KEY_STROKE = false;
+                playAudio();
+            }
+
             var keyToBeginContainer = document.getElementById('KEY_TO_BEGIN');
             keyToBeginContainer.innerHTML = '';
 
@@ -115,9 +137,53 @@ window.onload = function () {
     }
 
     setRandomWord = function () {
-        var randomIndex = Math.floor(Math.random() * TOP_10_MOVIES.length);
-        WORD = TOP_10_MOVIES[randomIndex];
-        VIDEO_LINK = TOP_10_LINKS[randomIndex];
+        SELECTED_INDEX = Math.floor(Math.random() * TOP_10_MOVIES.length);
+        WORD = TOP_10_MOVIES[SELECTED_INDEX];
+        VIDEO_LINK = TOP_10_LINKS[SELECTED_INDEX];
+    }
+
+    playAudio = function () {
+
+        AUDIO_PLAYER = document.getElementById('AUDIO_PLAYER');
+        AUDIO_PLAYER.removeChild(document.getElementById('AUDIO_PLAYER_SOURCE'));
+        var sourceElement = document.createElement('SOURCE');
+        sourceElement.id = 'AUDIO_PLAYER_SOURCE';
+        sourceElement.src = TOP_10_SCORE[SELECTED_INDEX];
+        sourceElement.type= "audio/mp3"
+        AUDIO_PLAYER.appendChild(sourceElement);
+        AUDIO_PLAYER.load();
+        AUDIO_PLAYER.play();
+
+        /*AUDIO_ELEMENT = new Audio(TOP_10_SCORE[SELECTED_INDEX]);
+        AUDIO_PREMISE = AUDIO_ELEMENT.play();
+
+        if (AUDIO_PREMISE !== undefined) {
+            AUDIO_PREMISE.then(_ => {
+
+            }).catch(error => {
+                alert('No audio playback possible.')
+            });
+        }*/
+
+    }
+
+    stopAudio = function () {
+
+        if (AUDIO_PLAYER != null) {
+            AUDIO_PLAYER.pause();
+            /*var sourceElement = document.getElementById('AUDIO_PLAYER_SOURCE');
+            if (sourceElement != null)
+                sourceElement.src = '';*/
+        }
+
+        /*AUDIO_PREMISE = AUDIO_ELEMENT.pause();
+
+        if (AUDIO_PREMISE !== undefined) {
+            AUDIO_PREMISE.then(_ => {}).catch(error => {
+                alert('No audio playback possible.')
+            });
+        }*/
+
     }
 
     renderComments = function () {
@@ -129,13 +195,17 @@ window.onload = function () {
 
         if (TOTAL_LIVES < 1) {
             livesStatusElement.innerHTML = "Game Over";
+            stopAudio();
             stopKeyUpListener();
             newGame();
+
         }
         if (TOTAL_REMAINING_UNKNOWN_CHARS == 0) {
             livesStatusElement.innerHTML = "You Won!";
+            stopAudio();
             showVideo();
             stopKeyUpListener();
+
         }
     }
 
@@ -225,5 +295,5 @@ window.onload = function () {
     newGame();
 
 
-    
+
 }
